@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ti n7bek</title>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <style>
+   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #FF61D2, #FE9090);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#chat-container {
+    width: 95%;
+    max-width: 400px;
+    height: 90vh;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+#chat-container.hidden{
+    display: none!important;
+}
+
+#chat-header {
+    background: linear-gradient(135deg, #FF61D2, #FE9090);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+#chat-window {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #FF61D2 transparent;
+}
+
+#chat-window::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chat-window::-webkit-scrollbar-thumb {
+    background-color: #FF61D2;
+    border-radius: 3px;
+}
+
+.message {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: flex-start;
+    justify-items: first baseline;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+ion-icon{
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+}
+.message .user-info {
+    margin-right: 10px;
+}
+
+.message .user-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #FF61D2;
+}
+
+.message .message-content {
+    max-width: 70%;
+   
+}
+
+.message .message-text {
+    background-color: #F0F0F0;
+    padding: 12px 15px;
+    border-radius: 18px;
+    font-size: 0.95em;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    max-width: 100%; /* Set a max width for the message bubble */
+    word-wrap: break-word; /* Allow long words to break */
+    overflow-wrap: break-word; /* Ensures wrapping for long text */
+}
+
+
+.message.self {
+    flex-direction: row-reverse;
+}
+
+.message.self .user-info {
+    margin-right: 0;
+    margin-left: 10px;
+}
+
+.message.self .message-text {
+    background: linear-gradient(135deg, #FF61D2, #FE9090);
+    color: white;
+}
+
+.timestamp {
+    font-size: 0.7em;
+    color: #888;
+    margin-top: 5px;
+}
+
+.message-image {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+.message-audio {
+    transform: translate(2px, -8.5px);
+    border-radius: 30px;
+    background-color: #f0f0f0;
+    padding: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+#input-area {
+    display: flex;
+    padding: 15px;
+    background-color: white;
+    border-top: 1px solid #eee;
+}
+
+#message {
+    flex-grow: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    background-color: #f8f8f8;
+    transition: all 0.3s ease;
+}
+
+#message:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #FF61D2;
+}
+
+#send, #record-voice, #upload-photo-btn {
+    width: 190px;
+    background: linear-gradient(135deg, #FF61D2, #FE9090);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    margin-left: 7px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease,
+}
+
+#send:hover, #record-voice:hover, #upload-photo-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(255, 97, 210, 0.4);
+}
+
+#login {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    z-index: 10;
+    transition: all 0.5s ease;
+}
+
+#login.hidden {
+    transform: translateY(-100%);
+}
+
+#login h2 {
+    margin-bottom: 20px;
+    color: #FF61D2;
+}
+
+#login input, #login button {
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+#login button {
+    background: linear-gradient(135deg, #FF61D2, #FE9090);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#login button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 97, 210, 0.4);
+}
+
+#photo {
+    display: none;
+}
+
+#photo-label {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#photo-label:hover {
+    background-color: #eee;
+}
+#password-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+#password-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+#password-container input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#password-container button {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background: linear-gradient(135deg, #FF61D2, #FE9090);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+#password-container button:hover {
+    background: rgba(255, 97, 210, 0.8);
+}
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+
+
+    </style>
+</head>
+<body>
+    <div id="chat-container" class="hidden">
+        <div id="chat-header">
+            N7bek 🥹
+        </div>
+        <div id="chat-window" ></div>
+        <div id="input-area">
+            <input type="text" id="message" placeholder="Type your message here..." />
+            <button id="send">➤</button>
+            <button id="record-voice"><ion-icon name="mic-outline"></ion-icon></button>
+            <input type="file" id="upload-photo" accept="image/*" style="display: none;">
+            <button id="upload-photo-btn"><ion-icon name="camera-outline"></ion-icon></button>
+        </div>
+   
+        
+        
+        <div id="login">
+            <h2>Welcome to Fantastic Chat</h2>
+            <input type="text" id="nickname" placeholder="Enter your nickname">
+            <label for="photo" id="photo-label">Choose a profile picture</label>
+            <input type="file" id="photo" accept="image/*">
+            <button id="loginBtn">Start Chatting</button>
+        </div>
+    </div>
+    <div id="password-overlay">
+        <div id="password-container">
+            <h2>Enter Password</h2>
+            <input type="password" id="password-input" placeholder="Enter password" />
+            <button id="password-submit">Submit</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot, orderBy, limit } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVBd9IfRRK9NmazCmsw1rL2Hx9c-atxdk",
+            authDomain: "appchat-eaf39.firebaseapp.com",
+            projectId: "appchat-eaf39",
+            storageBucket: "appchat-eaf39.appspot.com",
+            messagingSenderId: "853712220558",
+            appId: "1:853712220558:web:a38d09d8eed43e0243b4df",
+            measurementId: "G-13EJGF43WS"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        
+        // User info
+        let currentUser = {
+            nickname: '',
+            photoURL: ''
+        };
+
+        // DOM elements
+        const loginDiv = document.getElementById('login');
+        const chatWindow = document.getElementById('chat-window');
+        const chatContainer = document.getElementById('chat-container');
+        const sendButton = document.getElementById('send');
+        const messageInput = document.getElementById('message');
+        const loginBtn = document.getElementById('loginBtn');
+        const nicknameInput = document.getElementById('nickname');
+        const photoInput = document.getElementById('photo');
+        const recordVoiceButton = document.getElementById('record-voice');
+        const uploadPhotoButton = document.getElementById('upload-photo-btn');
+        const uploadPhotoInput = document.getElementById('upload-photo');
+
+        // Check if user is already logged in (from localStorage)
+        if (localStorage.getItem('nickname') && localStorage.getItem('photoURL')) {
+            currentUser.nickname = localStorage.getItem('nickname');
+            currentUser.photoURL = localStorage.getItem('photoURL');
+            loginDiv.classList.add('hidden');
+        }
+
+        // Login event
+        loginBtn.addEventListener('click', () => {
+            const nickname = nicknameInput.value;
+            const photo = photoInput.files[0];
+            const reader = new FileReader();
+
+            if (nickname && photo) {
+                reader.onload = function (e) {
+                    currentUser.nickname = nickname;
+                    currentUser.photoURL = e.target.result;
+
+                    // Save user info in localStorage
+                    localStorage.setItem('nickname', currentUser.nickname);
+                    localStorage.setItem('photoURL', currentUser.photoURL);
+
+                    loginDiv.classList.add('hidden');
+                };
+                reader.readAsDataURL(photo);
+            }
+        });
+
+
+
+        sendButton.addEventListener('click', () => sendMessage(messageInput.value));
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage(messageInput.value);
+            }
+        });
+
+      // Voice recording
+    let mediaRecorder;
+    let audioChunks = [];
+
+    recordVoiceButton.addEventListener('click', () => {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+            recordVoiceButton.innerHTML = '<ion-icon name="mic-outline"></ion-icon>'; // Change back to mic icon
+        } else {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
+                    recordVoiceButton.innerHTML = '<ion-icon name="stop-circle-outline"></ion-icon>'; // Change to stop icon
+
+                    audioChunks = [];
+                    mediaRecorder.addEventListener("dataavailable", event => {
+                        audioChunks.push(event.data);
+                    });
+
+                    mediaRecorder.addEventListener("stop", () => {
+                        const audioBlob = new Blob(audioChunks);
+                        const audioFile = new File([audioBlob], "audio.wav", { type: "audio/wav" });
+                        uploadAudio(audioFile);
+                    });
+                });
+        }
+    });
+
+        // Upload audio
+        const uploadAudio = async (audioFile) => {
+            const storageRef = ref(storage, 'audios/' + Date.now() + '.wav');
+            await uploadBytes(storageRef, audioFile);
+            const audioUrl = await getDownloadURL(storageRef);
+            sendMessage('', null, audioUrl);
+        };
+
+        // Photo upload
+        uploadPhotoButton.addEventListener('click', () => {
+            uploadPhotoInput.click();
+        });
+
+        uploadPhotoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                uploadImage(file);
+            }
+        });
+
+        const uploadImage = async (imageFile) => {
+            const storageRef = ref(storage, 'images/' + Date.now() + '_' + imageFile.name);
+            await uploadBytes(storageRef, imageFile);
+            const imageUrl = await getDownloadURL(storageRef);
+            sendMessage('', imageUrl);
+        };
+        const convertUrlsToLinks = (text) => {
+            const urlRegex = /(?<!href=["'])(https?:\/\/[^\s]+)/g; // Regular expression to match URLs
+            return text.replace(urlRegex, (url) => {
+                return `<a href="${url}" target="_blank">${url}</a>`;
+            });
+        };
+
+        const sendMessage = async (text, imageUrl = null, audioUrl = null) => {
+            if (text.trim() || imageUrl || audioUrl) {
+                try {
+                    const formattedText = convertUrlsToLinks(text);
+                    await addDoc(collection(db, 'messages'), {
+                        text: formattedText,
+                        imageUrl: imageUrl,
+                        audioUrl: audioUrl,
+                        timestamp: Date.now(),
+                        nickname: currentUser.nickname,
+                        photoURL: currentUser.photoURL
+                    });
+                    messageInput.value = ''; // Clear input
+                } catch (e) {
+                    console.error("Error adding message: ", e);
+                }
+            }
+        };
+
+        const messagesQuery = query(collection(db, 'messages'), orderBy('timestamp'));
+
+            onSnapshot(messagesQuery, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const msg = change.doc.data();
+                        const newMessage = document.createElement('div');
+                        newMessage.classList.add('message');
+                        if (msg.nickname === currentUser.nickname) {
+                            newMessage.classList.add('self');
+                        }
+
+                        let messageContent = '';
+                        if (msg.text) {
+                            messageContent += `<div class="message-text">${msg.text}</div>`;
+                        }
+                        if (msg.imageUrl) {
+                            messageContent += `<img src="${msg.imageUrl}" alt="Uploaded image" class="message-image">`;
+                        }
+                        if (msg.audioUrl) {
+                            messageContent += `<audio controls src="${msg.audioUrl}" class="message-audio"></audio>`;
+                        }
+
+                        newMessage.innerHTML = `
+                            <div class="user-info">
+                                <img src="${msg.photoURL}" alt="User Photo">
+                            </div>
+                            <div class="message-content">
+                                ${messageContent}
+                                <div class="timestamp">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                            </div>
+                            
+                        `;
+
+                        chatWindow.appendChild(newMessage);
+                        chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to the bottom
+                    }
+                });
+            });
+            
+
+            const passwordOverlay = document.getElementById("password-overlay");
+            const passwordInput = document.getElementById("password-input");
+            const passwordSubmit = document.getElementById("password-submit");
+
+            // Password submission handling
+            passwordSubmit.addEventListener("click", () => {
+                if (passwordInput.value === "122023") {
+                    passwordOverlay.style.display = "none"; // Hide overlay
+                    chatContainer.classList.remove("hidden"); // Show chat container
+                } else {
+                    alert("Incorrect password!");
+                }
+            });
+
+    </script>
+</body>
+</html>
